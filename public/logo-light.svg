@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 44" fill="none">
+  <!-- 1. First O in Dark Slate (#0f172a) with high-visibility accent for Light Mode -->
+  <g id="letter-O1">
+    <circle cx="24" cy="22" r="13" stroke="#0f172a" stroke-width="3.2" fill="none" />
+    <circle cx="24" cy="22" r="4.5" fill="#0284c7" />
+  </g>
+
+  <!-- 2. R in Dark Slate (#0f172a) -->
+  <g id="letter-R" stroke="#0f172a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 52 11 H 73 C 81 11 86 15 86 21 C 86 26.5 81 29.5 73.5 29.5 H 63" />
+    <path d="M 64.5 28.5 C 69 28.5 73.5 29.5 76.5 33 L 83 34.5" />
+  </g>
+
+  <!-- 3. I in Dark Slate (#0f172a) -->
+  <line x1="112" y1="10" x2="112" y2="34" stroke="#0f172a" stroke-width="3.2" stroke-linecap="round" />
+
+  <!-- 4. Second O in Dark Slate (#0f172a) -->
+  <circle cx="148" cy="22" r="13" stroke="#0f172a" stroke-width="3.2" fill="none" />
+
+  <!-- 5. N in Dark Slate (#0f172a) -->
+  <path d="M 180 34 V 10 L 199 34 V 10" stroke="#0f172a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer utilities {
+  .bg-tech-grid-light {
+    background-size: 36px 36px;
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  }
+  .bg-tech-grid-dark {
+    background-size: 36px 36px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+  .radial-mask {
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.45), 0 0 40px rgba(26, 115, 232, 0.25);
+  }
+
+  .text-glow-blue {
+    text-shadow: 0 0 20px rgba(26, 115, 232, 0.4), 0 0 35px rgba(99, 102, 241, 0.25);
+  }
+
+  @keyframes shimmerFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .animate-shimmer-flow {
+    background-size: 200% 200%;
+    animation: shimmerFlow 5s ease infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+}
+
+html {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Orion Platforms",
+  "description": "Information Technology company providing customized enterprise software development, web & mobile applications, cloud infrastructure, and managed tech services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
