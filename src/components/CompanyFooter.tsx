@@ -112,20 +112,12 @@ export const CompanyFooter: React.FC<CompanyFooterProps> = ({ onOpenLegalModal }
           
           {/* Brand & Corporate Description (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center">
               <img 
-                src={theme === 'dark' ? '/logo-dark.svg' : '/logo-light.svg'} 
-                alt="ORION Logo" 
-                className="h-8 w-auto object-contain select-none"
+                src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                alt="ORION Platforms Pvt. Ltd. Logo" 
+                className="h-12 sm:h-14 w-auto max-w-[340px] object-contain select-none"
               />
-              <div>
-                <span className="font-['Outfit',sans-serif] text-lg sm:text-xl lg:text-2xl font-black text-slate-950 dark:text-white block tracking-tight">
-                  <span className="text-[#1a73e8] dark:text-cyan-400">PLATFORMS</span>
-                </span>
-                <span className="text-[10px] sm:text-xs text-slate-500 uppercase tracking-widest font-mono font-medium">
-                  Pvt. Ltd.
-                </span>
-              </div>
             </div>
 
             <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm lg:text-base leading-relaxed">

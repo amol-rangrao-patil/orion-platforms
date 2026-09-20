@@ -83,6 +83,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResponse | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [istTime, setIstTime] = useState<string>('');
@@ -141,7 +142,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mqaevepk';
+  const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || 'https://formspree.io/f/mqaevepk';
 
   const handleCopy = (text: string, fieldKey: string) => {
     navigator.clipboard.writeText(text);
@@ -192,20 +193,16 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     if (!validate()) return;
 
     setIsSubmitting(true);
+    setSubmissionError(null);
 
     const subjectLine = formData.subject?.trim() || 'Custom Software Project Inquiry';
 
     const payload = {
       _subject: `[Inquiry] ${subjectLine} from ${formData.fullName} - ${COMPANY_NAME}`,
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone || 'Not Provided',
       subject: subjectLine,
-      message: formData.message,
+      ...formData,
       submittedAt: new Date().toISOString()
     };
-
-    let transmissionStatus: 'success' | 'fallback' = 'success';
 
     try {
       const response = await fetch(FORMSPREE_ENDPOINT, {
@@ -218,17 +215,20 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       });
 
       if (!response.ok) {
-        transmissionStatus = 'fallback';
+        const result = await response.json().catch(() => null) as { error?: string } | null;
+        throw new Error(result?.error || 'Formspree rejected the submission.');
       }
-    } catch {
-      transmissionStatus = 'fallback';
+    } catch (error) {
+      setSubmissionError(error instanceof Error ? error.message : 'Unable to send the inquiry right now.');
+      setIsSubmitting(false);
+      return;
     }
 
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const referenceId = `ORN-${new Date().getFullYear()}-${randomSuffix}`;
 
     setSubmissionResult({
-      formspreeStatus: transmissionStatus,
+      formspreeStatus: 'success',
       referenceId,
       timestamp: new Date().toISOString(),
       clientName: formData.fullName,
@@ -258,6 +258,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       newsletterOptIn: false
     });
     setSubmissionResult(null);
+    setSubmissionError(null);
     setErrors({});
   };
 
@@ -638,6 +639,11 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                 ) : (
                 /* Compact Animated Short Form */
                 <form onSubmit={handleSubmit} noValidate className="space-y-4">
+                  {submissionError && (
+                    <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300">
+                      {submissionError} Please try again or contact us directly by email or WhatsApp.
+                    </div>
+                  )}
                   
                   {/* Field 1: Full Name */}
                   <div className="space-y-1.5">

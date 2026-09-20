@@ -171,31 +171,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToContact }) => {
           <motion.div 
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            className="flex items-center space-x-2 shrink-0"
+            className="flex items-center shrink-0"
           >
             <img 
-              src={theme === 'dark' ? '/logo-dark.svg' : '/logo-light.svg'} 
-              alt="ORION Logo" 
-              className="h-7 sm:h-8 w-auto object-contain select-none"
+              src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+              alt="ORION Platforms Pvt. Ltd. Logo" 
+              className="h-10 sm:h-12 w-auto max-w-[250px] object-contain select-none mix-blend-multiply dark:mix-blend-screen"
             />
           </motion.div>
-
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center space-x-1.5">
-              <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white font-['Outfit',sans-serif] tracking-wider uppercase">
-                PLATFORMS
-              </span>
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-              </span>
-            </div>
-            <div className="flex items-center">
-              <span className="text-[10px] sm:text-[11px] font-semibold tracking-wider text-slate-500 dark:text-slate-400 truncate uppercase font-['Space_Grotesk',sans-serif]">
-                Pvt. Ltd.
-              </span>
-            </div>
-          </div>
         </a>
 
         {/* Center Navigation Links: Clean, spacious, and readable for Desktop */}
