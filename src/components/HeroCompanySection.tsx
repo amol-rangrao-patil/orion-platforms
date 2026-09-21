@@ -11,7 +11,6 @@ import {
   ArrowUpRight,
   Shield,
   Clock,
-  Layers,
   Award,
   Terminal,
   Cpu,
@@ -121,13 +120,6 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
   };
 
   const trustMetrics = [
-    {
-      icon: <Layers className="w-5 h-5" />,
-      colorClass: 'text-[#1a73e8] dark:text-blue-400',
-      value: '350+',
-      label: t.hero.trustMetrics.projects.label,
-      subtext: t.hero.trustMetrics.projects.subtext
-    },
     {
       icon: <Award className="w-5 h-5" />,
       colorClass: 'text-emerald-600 dark:text-emerald-400',
@@ -313,12 +305,12 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
             </motion.a>
           </motion.div>
 
-          {/* 4 Trust Metric Cards with Animated Count-Up - Fully Visible Above Fold */}
+          {/* Trust Metric Cards with Animated Count-Up - Fully Visible Above Fold */}
           <motion.div 
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="w-full grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4 max-w-4xl lg:max-w-5xl mx-auto px-1 sm:px-0"
+            className="w-full grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3.5 lg:gap-4 max-w-4xl lg:max-w-5xl mx-auto px-1 sm:px-0"
           >
             {trustMetrics.map((metric, idx) => (
               <motion.div

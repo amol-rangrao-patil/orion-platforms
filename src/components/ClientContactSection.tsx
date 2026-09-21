@@ -142,7 +142,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || 'https://formspree.io/f/mqaevepk';
+  const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || 'https://formspree.io/f/meaoarok';
 
   const handleCopy = (text: string, fieldKey: string) => {
     navigator.clipboard.writeText(text);
@@ -199,8 +199,24 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
     const payload = {
       _subject: `[Inquiry] ${subjectLine} from ${formData.fullName} - ${COMPANY_NAME}`,
+      _replyto: formData.email,
+      clientType: formData.clientType,
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
       subject: subjectLine,
-      ...formData,
+      projectName: formData.projectName,
+      projectStage: formData.projectStage,
+      serviceCategory: formData.serviceCategory,
+      timeline: formData.timeline,
+      industry: formData.industry,
+      message: formData.message,
+      newsletterOptIn: formData.newsletterOptIn,
+      ...(formData.clientType === 'company' ? {
+        companyName: formData.companyName,
+        role: formData.role,
+        companySize: formData.companySize
+      } : {}),
       submittedAt: new Date().toISOString()
     };
 
@@ -208,15 +224,15 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
       });
+      const result = await response.json().catch(() => null) as { error?: string; message?: string } | null;
 
       if (!response.ok) {
-        const result = await response.json().catch(() => null) as { error?: string } | null;
-        throw new Error(result?.error || 'Formspree rejected the submission.');
+        throw new Error(result?.error || result?.message || 'Formspree rejected the submission.');
       }
     } catch (error) {
       setSubmissionError(error instanceof Error ? error.message : 'Unable to send the inquiry right now.');
@@ -224,13 +240,13 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       return;
     }
 
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-    const referenceId = `ORN-${new Date().getFullYear()}-${randomSuffix}`;
+    const referenceId = `ORN-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const submittedAt = new Date().toISOString();
 
     setSubmissionResult({
       formspreeStatus: 'success',
       referenceId,
-      timestamp: new Date().toISOString(),
+      timestamp: submittedAt,
       clientName: formData.fullName,
       email: formData.email,
       clientType: formData.clientType,
@@ -263,6 +279,53 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
   };
 
   const currentCategoryName = SERVICE_CATEGORIES.find(s => s.id === formData.serviceCategory)?.name || 'Custom Software Development';
+
+  const engagementTimeline = (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.45, delay: 0.15 }}
+      className="relative overflow-hidden rounded-2xl border border-blue-200/70 bg-gradient-to-br from-blue-50/80 via-white to-cyan-50/60 p-5 dark:border-blue-900/60 dark:from-slate-900 dark:via-slate-900 dark:to-blue-950/30"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-600 dark:text-cyan-400">Engagement Protocol</div>
+          <h4 className="mt-1 text-base font-extrabold text-slate-950 dark:text-white">What happens next</h4>
+        </div>
+        <span className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" /> Live desk
+        </span>
+      </div>
+      <div className="space-y-3">
+        {[
+          ['01', 'Inquiry received', 'Your technical details reach our engineering desk securely.'],
+          ['02', 'Architect review', 'A senior architect reviews your scope and requirements.'],
+          ['03', 'Direct response', 'Expect a clear next step within two business hours.']
+        ].map(([step, title, description], index) => (
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: 0.25 + index * 0.1 }}
+            className="flex items-start gap-3"
+          >
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-[10px] font-bold text-white shadow-sm shadow-blue-500/30">{step}</span>
+            <div>
+              <div className="text-xs font-bold text-slate-900 dark:text-white">{title}</div>
+              <div className="mt-0.5 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">{description}</div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+      <motion.div
+        animate={{ x: ['-120%', '360%'] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: 'linear' }}
+        className="absolute bottom-0 left-0 h-px w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+      />
+    </motion.div>
+  );
 
   return (
     <section id="contact-section" className="py-16 sm:py-20 lg:py-24 bg-slate-50/50 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300 relative scroll-mt-20 lg:scroll-mt-24">
@@ -473,16 +536,13 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
               </div>
             </motion.div>
 
-            {/* Client Guarantee Seal */}
-            <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center space-x-3">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>Full source code handover, documentation, and Git repository transferred upon milestone completion.</span>
-            </div>
+            {isFormVisible && engagementTimeline}
           </motion.div>
 
           {/* Right Column: Scoping & Inquiry Form (7 cols) */}
           <div className="lg:col-span-7">
             {!isFormVisible ? (
+              <>
               /* Hidden by default: Clean, prominent, animated card prompting user to open the form */
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -543,6 +603,8 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                   <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                 </motion.button>
               </motion.div>
+              <div className="mt-6">{!isFormVisible && engagementTimeline}</div>
+              </>
             ) : (
               /* The Short Animated Form Revealed with Close/Collapse button */
               <motion.div 
@@ -568,6 +630,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>Response &lt;2h</span>
                           </span>
+                          <span className="text-[10px] font-mono font-semibold text-slate-500 dark:text-slate-400">Formspree · meaoarok</span>
                         </div>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                           Direct encrypted transmission to {multilingual[language].name} Engineering Desk
@@ -618,7 +681,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
                       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                         <a
-                          href={`https://wa.me/918485038318?text=${encodeURIComponent(`Hello Orion Platforms, I submitted an inquiry with Reference ID ${submissionResult.referenceId} regarding ${submissionResult.serviceCategory}.`)}`}
+                          href={`https://wa.me/917499577784?text=${encodeURIComponent(`Hello Orion Platforms, I submitted an inquiry with Reference ID ${submissionResult.referenceId} regarding ${submissionResult.serviceCategory}.`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-2.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all cursor-pointer"
@@ -638,15 +701,57 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                 ) : (
                 /* Compact Animated Short Form */
-                <form onSubmit={handleSubmit} noValidate className="space-y-4">
+                <motion.form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: { opacity: 1, transition: { staggerChildren: 0.06 } }
+                  }}
+                  className="space-y-4"
+                >
                   {submissionError && (
                     <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300">
                       {submissionError} Please try again or contact us directly by email or WhatsApp.
                     </div>
                   )}
+
+                  {/* Engagement Type */}
+                  <div className="space-y-2">
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                      How are you contacting us?
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {[
+                        { value: 'company' as const, label: 'Company / Enterprise', description: 'For business and organization projects' },
+                        { value: 'personal' as const, label: 'Individual Client', description: 'For personal projects and individual needs' }
+                      ].map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({
+                            ...formData,
+                            clientType: option.value,
+                            ...(option.value === 'personal' ? { companyName: '', role: '', companySize: '' } : {})
+                          })}
+                          className={`text-left rounded-xl border px-4 py-3 transition-all cursor-pointer ${
+                            formData.clientType === option.value
+                              ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-500/30'
+                              : 'border-slate-200 bg-slate-50 hover:border-blue-300 dark:border-slate-800 dark:bg-slate-950/70'
+                          }`}
+                        >
+                          <span className="block text-sm font-bold text-slate-900 dark:text-white">{option.label}</span>
+                          <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{option.description}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Field 1: Full Name */}
-                  <div className="space-y-1.5">
+                  <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
                     <label 
                       htmlFor="fullName"
                       className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center justify-between"
@@ -672,10 +777,10 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     {errors.fullName && (
                       <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.fullName}</span>
                     )}
-                  </div>
+                  </motion.div>
 
                   {/* Field 2: Email Address */}
-                  <div className="space-y-1.5">
+                  <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
                     <label 
                       htmlFor="email"
                       className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center justify-between"
@@ -701,7 +806,72 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     {errors.email && (
                       <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.email}</span>
                     )}
+                  </motion.div>
+
+                  {/* Phone */}
+                  <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
+                    <label htmlFor="phone" className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                      Phone / WhatsApp <span className="text-slate-400 normal-case font-normal">(optional)</span>
+                    </label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone || ''}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="e.g., +91 7499577784"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 focus:border-[#1a73e8] dark:focus:border-cyan-400 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm outline-none transition-all"
+                    />
+                  </motion.div>
                   </div>
+
+                  {/* Company Details: only for company inquiries */}
+                  {formData.clientType === 'company' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0, y: -8 }}
+                      animate={{ opacity: 1, height: 'auto', y: 0 }}
+                      transition={{ duration: 0.28 }}
+                      className="space-y-3 rounded-xl border border-blue-200/70 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 p-4 overflow-hidden"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-cyan-400">
+                        <Building2 className="w-3.5 h-3.5" />
+                        Company Details
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input
+                          id="companyName"
+                          type="text"
+                          value={formData.companyName || ''}
+                          onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                          placeholder="Company name"
+                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                        />
+                        <input
+                          id="role"
+                          type="text"
+                          value={formData.role || ''}
+                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                          placeholder="Your role / designation"
+                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                        />
+                        <select
+                          id="companySize"
+                          value={formData.companySize || COMPANY_SIZES[0]}
+                          onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
+                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
+                        >
+                          {COMPANY_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
+                        </select>
+                        <input
+                          id="industry"
+                          type="text"
+                          value={formData.industry || ''}
+                          onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                          placeholder="Industry (e.g., Healthcare, SaaS)"
+                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
 
                   {/* Field 3: Subject / Topic with Animated Quick Select Pills */}
                   <div className="space-y-2">
@@ -757,6 +927,48 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                   </div>
 
+                  {/* Project Scope Details */}
+                  <motion.div
+                    variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
+                    className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 p-4"
+                  >
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Project Scope</div>
+                    <input
+                      id="projectName"
+                      type="text"
+                      value={formData.projectName || ''}
+                      onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
+                      placeholder="Project name or short idea"
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <select
+                        id="serviceCategory"
+                        value={formData.serviceCategory}
+                        onChange={(e) => setFormData({ ...formData, serviceCategory: e.target.value })}
+                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
+                      >
+                        {SERVICE_CATEGORIES.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
+                      </select>
+                      <select
+                        id="projectStage"
+                        value={formData.projectStage}
+                        onChange={(e) => setFormData({ ...formData, projectStage: e.target.value })}
+                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
+                      >
+                        {PROJECT_STAGES.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
+                      </select>
+                      <select
+                        id="timeline"
+                        value={formData.timeline}
+                        onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
+                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
+                      >
+                        {TIMELINE_OPTIONS.map((timeline) => <option key={timeline} value={timeline}>{timeline}</option>)}
+                      </select>
+                    </div>
+                  </motion.div>
+
                   {/* Field 4: Message */}
                   <div className="space-y-1.5">
                     <label 
@@ -806,7 +1018,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
                     <div className="flex items-center gap-2.5">
                       <a
-                        href={`https://wa.me/918485038318?text=${encodeURIComponent(`Hello Orion Platforms! My name is ${formData.fullName || 'Client'}, inquiring about: ${formData.subject || 'Software Services'}.`)}`}
+                        href={`https://wa.me/917499577784?text=${encodeURIComponent(`Hello Orion Platforms! My name is ${formData.fullName || 'Client'}, inquiring about: ${formData.subject || 'Software Services'}.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex-1 py-2.5 px-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/35 cursor-pointer"
@@ -824,9 +1036,22 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                         <span>Hide</span>
                       </button>
                     </div>
+
+                    <div className="relative h-8 overflow-hidden rounded-lg border border-blue-200/60 bg-blue-50/60 px-3 dark:border-blue-900/60 dark:bg-blue-950/20">
+                      <motion.div
+                        initial={{ x: '-100%' }}
+                        animate={{ x: '100%' }}
+                        transition={{ duration: 2.4, repeat: Infinity, ease: 'linear' }}
+                        className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent"
+                      />
+                      <div className="relative flex h-full items-center justify-between text-[10px] font-semibold uppercase tracking-[0.14em] text-blue-700 dark:text-cyan-300">
+                        <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />Secure intake channel active</span>
+                        <span>Ready to transmit</span>
+                      </div>
+                    </div>
                   </div>
 
-                </form>
+                </motion.form>
               )}
 
                 </div>

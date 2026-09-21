@@ -19,7 +19,7 @@ export interface ContactFormData {
 }
 
 export interface SubmissionResponse {
-  formspreeStatus: 'success' | 'fallback';
+  formspreeStatus: 'success';
   referenceId: string;
   timestamp: string;
   clientName: string;
