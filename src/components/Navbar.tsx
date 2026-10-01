@@ -11,7 +11,8 @@ import {
   MapPin, 
   ChevronRight,
   Globe,
-  Sparkles
+  Sparkles,
+  Users
 } from 'lucide-react';
 import { COMPANY_NAME } from '../data/companyInfo';
 import { useTheme } from '../context/ThemeContext';
@@ -33,6 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToContact }) => {
     { label: t.nav.about, href: '#hero', icon: Home },
     { label: t.nav.services, href: '#company-capabilities', icon: Layers },
     { label: t.nav.contact, href: '#contact-section', icon: Mail },
+    { label: t.nav.headquarters, href: '#headquarters-section', icon: MapPin },
   ];
 
   // Smooth animated scroll depth tracking
@@ -107,10 +109,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToContact }) => {
     }
   }, []);
 
+  const handleNavigateToFounders = useCallback(() => {
+    setMobileMenuOpen(false);
+    window.location.href = '/founders';
+  }, []);
+
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setActiveSection(href);
     setMobileMenuOpen(false);
+
+    if (href.startsWith('/')) {
+      window.location.href = href;
+      return;
+    }
 
     if (href === '#contact-section' && onScrollToContact) {
       onScrollToContact();
@@ -233,17 +245,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToContact }) => {
             )}
           </motion.button>
 
-          {/* Direct Headquarters Action Button */}
+          {/* Founders Page Action Button */}
           <motion.button
             whileHover={{ scale: 1.03, y: -1 }}
             whileTap={{ scale: 0.97 }}
-            onClick={handleScrollToHeadquarters}
-            id="navbar-headquarters-cta-btn"
-            title="Navigate to Headquarters"
+            onClick={handleNavigateToFounders}
+            id="navbar-founders-cta-btn"
+            title="Meet the Founders"
             className="hidden md:inline-flex items-center space-x-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#1a73e8] to-blue-600 hover:from-[#1557b0] hover:to-blue-700 text-white text-xs lg:text-sm font-bold shadow-sm shadow-blue-500/25 transition-all cursor-pointer"
           >
-            <MapPin className="w-3.5 h-3.5" />
-            <span>{t.nav.headquarters}</span>
+            <Users className="w-3.5 h-3.5" />
+            <span>{t.nav.founders}</span>
           </motion.button>
 
           {/* Mobile menu trigger with smooth animation */}
@@ -315,13 +327,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onScrollToContact }) => {
                 );
               })}
 
-              {/* Mobile Headquarters CTA */}
+              {/* Mobile Founders CTA */}
               <button
-                onClick={handleScrollToHeadquarters}
+                onClick={handleNavigateToFounders}
                 className="w-full mt-2 py-3 rounded-xl bg-[#1a73e8] hover:bg-[#1557b0] text-white font-bold text-sm flex items-center justify-center space-x-2 shadow-sm shadow-blue-500/25 cursor-pointer"
               >
-                <MapPin className="w-4 h-4" />
-                <span>{t.nav.headquarters}</span>
+                <Users className="w-4 h-4" />
+                <span>{t.nav.founders}</span>
               </button>
             </motion.div>
           </>

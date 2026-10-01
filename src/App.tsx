@@ -6,6 +6,7 @@ import { HeroCompanySection } from './components/HeroCompanySection';
 import { ClientContactSection } from './components/ClientContactSection';
 import { CompanyFooter } from './components/CompanyFooter';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { FoundersPage } from './components/FoundersPage';
 import TechConstellationCanvas from './components/TechConstellationCanvas';
 import { LegalModalType } from './types';
 
@@ -35,6 +36,18 @@ export default function App() {
     setSelectedServiceId(serviceId);
     setForceOpenForm(true);
   };
+
+  if (window.location.pathname === '/founders') {
+    return (
+      <ErrorBoundary>
+        <ThemeProvider>
+          <LanguageProvider>
+            <FoundersPage />
+          </LanguageProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
+    );
+  }
 
   return (
     <ErrorBoundary>

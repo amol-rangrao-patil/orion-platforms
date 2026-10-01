@@ -53,6 +53,7 @@ export interface Translations {
     about: string;
     services: string;
     contact: string;
+    founders: string;
     headquarters: string;
     techPvtLtd: string;
     hqBadge: string;
@@ -138,6 +139,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       about: 'About',
       services: 'Services',
       contact: 'Contact',
+      founders: 'Founders',
       headquarters: 'Headquarters',
       techPvtLtd: 'Tech Pvt. Ltd.',
       hqBadge: 'HQ Kolhapur',
@@ -238,6 +240,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       about: 'परिचय',
       services: 'सेवा व तंत्रज्ञान',
       contact: 'प्रकल्प संपर्क',
+      founders: 'संस्थापक',
       headquarters: 'मुख्यालय कोल्हापूर',
       techPvtLtd: 'टेक प्रायव्हेट लिमिटेड',
       hqBadge: 'मुख्यालय कोल्हापूर',
@@ -338,6 +341,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       about: 'परिचय',
       services: 'सेवाएं व तकनीक',
       contact: 'प्रोजेक्ट संपर्क',
+      founders: 'संस्थापक',
       headquarters: 'मुख्यालय कोल्हापुर',
       techPvtLtd: 'टेक प्राइवेट लिमिटेड',
       hqBadge: 'मुख्यालय कोल्हापुर',

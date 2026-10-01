@@ -7,7 +7,7 @@ import {
   Check, 
   Copy, 
   CheckCircle2, 
-  Building2, 
+  Building2,
   User, 
   RefreshCw, 
   ExternalLink, 
@@ -31,7 +31,6 @@ import {
   COMPANY_CONTACT, 
   SERVICE_CATEGORIES, 
   TIMELINE_OPTIONS, 
-  COMPANY_SIZES, 
   PROJECT_STAGES,
   COMPANY_COORDINATES
 } from '../data/companyInfo';
@@ -64,15 +63,11 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
   const { language, t, multilingual } = useLanguage();
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [formData, setFormData] = useState<ContactFormData>({
-    clientType: 'company',
+    clientType: 'personal',
     fullName: '',
     email: '',
     subject: 'Custom Software Development',
     phone: '',
-    companyName: '',
-    role: '',
-    companySize: COMPANY_SIZES[0],
-    industry: '',
     projectName: '',
     projectStage: PROJECT_STAGES[0],
     serviceCategory: SERVICE_CATEGORIES[0].id,
@@ -167,7 +162,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = 'Please enter your full name or company name.';
+      newErrors.fullName = 'Please enter your full name.';
     }
 
     if (!formData.email.trim()) {
@@ -200,7 +195,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     const payload = {
       _subject: `[Inquiry] ${subjectLine} from ${formData.fullName} - ${COMPANY_NAME}`,
       _replyto: formData.email,
-      clientType: formData.clientType,
+      clientType: 'personal',
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone,
@@ -209,14 +204,8 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       projectStage: formData.projectStage,
       serviceCategory: formData.serviceCategory,
       timeline: formData.timeline,
-      industry: formData.industry,
       message: formData.message,
       newsletterOptIn: formData.newsletterOptIn,
-      ...(formData.clientType === 'company' ? {
-        companyName: formData.companyName,
-        role: formData.role,
-        companySize: formData.companySize
-      } : {}),
       submittedAt: new Date().toISOString()
     };
 
@@ -249,7 +238,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       timestamp: submittedAt,
       clientName: formData.fullName,
       email: formData.email,
-      clientType: formData.clientType,
+      clientType: 'personal',
       companyOrProject: formData.fullName,
       serviceCategory: subjectLine
     });
@@ -259,13 +248,9 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
   const handleReset = () => {
     setFormData({
-      clientType: 'company',
+      clientType: 'personal',
       fullName: '',
       email: '',
-      companyName: '',
-      role: '',
-      companySize: COMPANY_SIZES[0],
-      industry: '',
       projectName: '',
       projectStage: PROJECT_STAGES[0],
       serviceCategory: SERVICE_CATEGORIES[0].id,
@@ -571,7 +556,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-500 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-bold text-slate-950 dark:text-white">Structured Scoping: </span>
-                      <span>Dedicated options for Company / Enterprise SLA or Individual / Startup MVP.</span>
+                      <span>Share your project idea and our engineering team will help shape the next step.</span>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3 text-xs sm:text-sm text-slate-800 dark:text-slate-200">
@@ -718,37 +703,6 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                   )}
 
-                  {/* Engagement Type */}
-                  <div className="space-y-2">
-                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                      How are you contacting us?
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {[
-                        { value: 'company' as const, label: 'Company / Enterprise', description: 'For business and organization projects' },
-                        { value: 'personal' as const, label: 'Individual Client', description: 'For personal projects and individual needs' }
-                      ].map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => setFormData({
-                            ...formData,
-                            clientType: option.value,
-                            ...(option.value === 'personal' ? { companyName: '', role: '', companySize: '' } : {})
-                          })}
-                          className={`text-left rounded-xl border px-4 py-3 transition-all cursor-pointer ${
-                            formData.clientType === option.value
-                              ? 'border-blue-600 bg-blue-50 dark:bg-blue-950/40 ring-1 ring-blue-500/30'
-                              : 'border-slate-200 bg-slate-50 hover:border-blue-300 dark:border-slate-800 dark:bg-slate-950/70'
-                          }`}
-                        >
-                          <span className="block text-sm font-bold text-slate-900 dark:text-white">{option.label}</span>
-                          <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{option.description}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Field 1: Full Name */}
                   <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
@@ -824,54 +778,37 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                   </motion.div>
                   </div>
 
-                  {/* Company Details: only for company inquiries */}
-                  {formData.clientType === 'company' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0, y: -8 }}
-                      animate={{ opacity: 1, height: 'auto', y: 0 }}
-                      transition={{ duration: 0.28 }}
-                      className="space-y-3 rounded-xl border border-blue-200/70 dark:border-blue-900/60 bg-blue-50/50 dark:bg-blue-950/20 p-4 overflow-hidden"
-                    >
-                      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-cyan-400">
-                        <Building2 className="w-3.5 h-3.5" />
-                        Company Details
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Newsletter subscription preference */}
+                  <motion.fieldset
+                    variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
+                    className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-950/60"
+                  >
+                    <legend className="px-1 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                      Subscribe to project updates?
+                    </legend>
+                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <label className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${formData.newsletterOptIn ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-cyan-300' : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'}`}>
                         <input
-                          id="companyName"
-                          type="text"
-                          value={formData.companyName || ''}
-                          onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                          placeholder="Company name"
-                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                          type="radio"
+                          name="newsletterOptIn"
+                          checked={formData.newsletterOptIn === true}
+                          onChange={() => setFormData({ ...formData, newsletterOptIn: true })}
+                          className="h-4 w-4 accent-blue-600"
                         />
+                        Yes, keep me updated
+                      </label>
+                      <label className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${formData.newsletterOptIn === false ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-cyan-300' : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'}`}>
                         <input
-                          id="role"
-                          type="text"
-                          value={formData.role || ''}
-                          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                          placeholder="Your role / designation"
-                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
+                          type="radio"
+                          name="newsletterOptIn"
+                          checked={formData.newsletterOptIn === false}
+                          onChange={() => setFormData({ ...formData, newsletterOptIn: false })}
+                          className="h-4 w-4 accent-blue-600"
                         />
-                        <select
-                          id="companySize"
-                          value={formData.companySize || COMPANY_SIZES[0]}
-                          onChange={(e) => setFormData({ ...formData, companySize: e.target.value })}
-                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
-                        >
-                          {COMPANY_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
-                        </select>
-                        <input
-                          id="industry"
-                          type="text"
-                          value={formData.industry || ''}
-                          onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
-                          placeholder="Industry (e.g., Healthcare, SaaS)"
-                          className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
-                        />
-                      </div>
-                    </motion.div>
-                  )}
+                        No, thanks
+                      </label>
+                    </div>
+                  </motion.fieldset>
 
                   {/* Field 3: Subject / Topic with Animated Quick Select Pills */}
                   <div className="space-y-2">
@@ -927,12 +864,12 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                   </div>
 
-                  {/* Project Scope Details */}
+                  {/* Project details */}
                   <motion.div
                     variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
                     className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 p-4"
                   >
-                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Project Scope</div>
+                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Project details</div>
                     <input
                       id="projectName"
                       type="text"
