@@ -43,18 +43,6 @@ interface ClientContactSectionProps {
   onFormVisibilityChange?: (visible: boolean) => void;
 }
 
-const COMMON_REQUIREMENT_CHIPS = [
-  'Full-Stack Web (React/Next.js)',
-  'Mobile Apps (iOS & Android)',
-  'Cloud Infrastructure (AWS/GCP)',
-  'Custom ERP / CRM System',
-  'PostgreSQL Database & APIs',
-  'Authentication & Role Permissions',
-  'Payment Gateway Integration',
-  'Real-Time WebSocket Sync',
-  'High-Concurrency Architecture'
-];
-
 export const ClientContactSection: React.FC<ClientContactSectionProps> = ({ 
   selectedServiceId,
   forceOpenForm,
@@ -116,6 +104,16 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
     }
   };
 
+  const handleScheduleVisit = () => {
+    setFormData(prev => ({
+      ...prev,
+      subject: 'On-Site Headquarters Visit Request'
+    }));
+    setSubmissionError(null);
+    setSubmissionResult(null);
+    handleToggleForm(true);
+  };
+
   // Live IST Clock
   useEffect(() => {
     const updateTime = () => {
@@ -139,44 +137,48 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
   const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || 'https://formspree.io/f/meaoarok';
 
-  const handleCopy = (text: string, fieldKey: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedField(fieldKey);
-    setTimeout(() => {
-      setCopiedField(null);
-    }, 2000);
-  };
-
-  const handleAddChip = (chipText: string) => {
-    setFormData(prev => {
-      if (prev.message.includes(chipText)) return prev;
-      const separator = prev.message.trim() ? '\n- ' : 'Key Requirements:\n- ';
-      return {
-        ...prev,
-        message: prev.message + separator + chipText
-      };
-    });
+  const handleCopy = async (text: string, fieldKey: string) => {
+    try {
+      if (!navigator.clipboard) {
+        throw new Error('Clipboard unavailable');
+      }
+      await navigator.clipboard.writeText(text);
+      setCopiedField(fieldKey);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      setSubmissionError('Copy is unavailable in this browser. Please select the address manually.');
+    }
   };
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
+    const fullName = formData.fullName.trim();
+    const email = formData.email.trim();
+    const subject = formData.subject?.trim() || '';
+    const message = formData.message.trim();
 
-    if (!formData.fullName.trim()) {
+    if (!fullName) {
       newErrors.fullName = 'Please enter your full name.';
+    } else if (fullName.length < 2) {
+      newErrors.fullName = 'Name must be at least 2 characters.';
     }
 
-    if (!formData.email.trim()) {
+    if (!email) {
       newErrors.email = 'Please enter your email address.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
       newErrors.email = 'Please enter a valid email address.';
     }
 
-    if (!formData.subject?.trim()) {
+    if (!subject) {
       newErrors.subject = 'Please specify the subject or project topic.';
+    } else if (subject.length < 3) {
+      newErrors.subject = 'Subject must be at least 3 characters.';
     }
 
-    if (!formData.message.trim() || formData.message.trim().length < 5) {
+    if (!message) {
       newErrors.message = 'Please provide a brief message or project requirements.';
+    } else if (message.length < 5) {
+      newErrors.message = 'Message must be at least 5 characters.';
     }
 
     setErrors(newErrors);
@@ -185,7 +187,12 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      window.requestAnimationFrame(() => {
+        document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      });
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmissionError(null);
@@ -194,17 +201,17 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
 
     const payload = {
       _subject: `[Inquiry] ${subjectLine} from ${formData.fullName} - ${COMPANY_NAME}`,
-      _replyto: formData.email,
+      _replyto: formData.email.trim(),
       clientType: 'personal',
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
+      fullName: formData.fullName.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone?.trim() || '',
       subject: subjectLine,
-      projectName: formData.projectName,
+      projectName: formData.projectName?.trim() || '',
       projectStage: formData.projectStage,
       serviceCategory: formData.serviceCategory,
       timeline: formData.timeline,
-      message: formData.message,
+      message: formData.message.trim(),
       newsletterOptIn: formData.newsletterOptIn,
       submittedAt: new Date().toISOString()
     };
@@ -251,6 +258,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
       clientType: 'personal',
       fullName: '',
       email: '',
+      subject: 'Custom Software Development',
       projectName: '',
       projectStage: PROJECT_STAGES[0],
       serviceCategory: SERVICE_CATEGORIES[0].id,
@@ -264,53 +272,6 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
   };
 
   const currentCategoryName = SERVICE_CATEGORIES.find(s => s.id === formData.serviceCategory)?.name || 'Custom Software Development';
-
-  const engagementTimeline = (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.45, delay: 0.15 }}
-      className="relative overflow-hidden rounded-2xl border border-blue-200/70 bg-gradient-to-br from-blue-50/80 via-white to-cyan-50/60 p-5 dark:border-blue-900/60 dark:from-slate-900 dark:via-slate-900 dark:to-blue-950/30"
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-600 dark:text-cyan-400">Engagement Protocol</div>
-          <h4 className="mt-1 text-base font-extrabold text-slate-950 dark:text-white">What happens next</h4>
-        </div>
-        <span className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" /> Live desk
-        </span>
-      </div>
-      <div className="space-y-3">
-        {[
-          ['01', 'Inquiry received', 'Your technical details reach our engineering desk securely.'],
-          ['02', 'Architect review', 'A senior architect reviews your scope and requirements.'],
-          ['03', 'Direct response', 'Expect a clear next step within two business hours.']
-        ].map(([step, title, description], index) => (
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: -10 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.35, delay: 0.25 + index * 0.1 }}
-            className="flex items-start gap-3"
-          >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-[10px] font-bold text-white shadow-sm shadow-blue-500/30">{step}</span>
-            <div>
-              <div className="text-xs font-bold text-slate-900 dark:text-white">{title}</div>
-              <div className="mt-0.5 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">{description}</div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <motion.div
-        animate={{ x: ['-120%', '360%'] }}
-        transition={{ duration: 3.2, repeat: Infinity, ease: 'linear' }}
-        className="absolute bottom-0 left-0 h-px w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
-      />
-    </motion.div>
-  );
 
   return (
     <section id="contact-section" className="py-16 sm:py-20 lg:py-24 bg-slate-50/50 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300 relative scroll-mt-20 lg:scroll-mt-24">
@@ -521,7 +482,6 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
               </div>
             </motion.div>
 
-            {isFormVisible && engagementTimeline}
           </motion.div>
 
           {/* Right Column: Scoping & Inquiry Form (7 cols) */}
@@ -588,7 +548,6 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                   <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                 </motion.button>
               </motion.div>
-              <div className="mt-6">{!isFormVisible && engagementTimeline}</div>
               </>
             ) : (
               /* The Short Animated Form Revealed with Close/Collapse button */
@@ -703,7 +662,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Field 1: Full Name */}
                   <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
                     <label 
@@ -720,6 +679,12 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                       <input
                         id="fullName"
                         type="text"
+                        name="fullName"
+                        autoComplete="name"
+                        required
+                        minLength={2}
+                        aria-invalid={Boolean(errors.fullName)}
+                        aria-describedby={errors.fullName ? 'fullName-error' : undefined}
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                         placeholder="e.g., Rajesh Sharma / Tech Solutions"
@@ -729,7 +694,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                       />
                     </div>
                     {errors.fullName && (
-                      <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.fullName}</span>
+                      <span id="fullName-error" role="alert" className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.fullName}</span>
                     )}
                   </motion.div>
 
@@ -749,6 +714,11 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                       <input
                         id="email"
                         type="email"
+                        name="email"
+                        autoComplete="email"
+                        required
+                        aria-invalid={Boolean(errors.email)}
+                        aria-describedby={errors.email ? 'email-error' : undefined}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="name@company.com"
@@ -758,57 +728,11 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                       />
                     </div>
                     {errors.email && (
-                      <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.email}</span>
+                      <span id="email-error" role="alert" className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.email}</span>
                     )}
                   </motion.div>
 
-                  {/* Phone */}
-                  <motion.div variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }} className="space-y-1.5">
-                    <label htmlFor="phone" className="block text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                      Phone / WhatsApp <span className="text-slate-400 normal-case font-normal">(optional)</span>
-                    </label>
-                    <input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone || ''}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      placeholder="e.g., +91 7499577784"
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200 dark:border-slate-800 focus:border-[#1a73e8] dark:focus:border-cyan-400 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm outline-none transition-all"
-                    />
-                  </motion.div>
                   </div>
-
-                  {/* Newsletter subscription preference */}
-                  <motion.fieldset
-                    variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-                    className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 dark:border-slate-800 dark:bg-slate-950/60"
-                  >
-                    <legend className="px-1 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                      Subscribe to project updates?
-                    </legend>
-                    <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      <label className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${formData.newsletterOptIn ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-cyan-300' : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'}`}>
-                        <input
-                          type="radio"
-                          name="newsletterOptIn"
-                          checked={formData.newsletterOptIn === true}
-                          onChange={() => setFormData({ ...formData, newsletterOptIn: true })}
-                          className="h-4 w-4 accent-blue-600"
-                        />
-                        Yes, keep me updated
-                      </label>
-                      <label className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${formData.newsletterOptIn === false ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-cyan-300' : 'border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'}`}>
-                        <input
-                          type="radio"
-                          name="newsletterOptIn"
-                          checked={formData.newsletterOptIn === false}
-                          onChange={() => setFormData({ ...formData, newsletterOptIn: false })}
-                          className="h-4 w-4 accent-blue-600"
-                        />
-                        No, thanks
-                      </label>
-                    </div>
-                  </motion.fieldset>
 
                   {/* Field 3: Subject / Topic with Animated Quick Select Pills */}
                   <div className="space-y-2">
@@ -826,6 +750,11 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     <input
                       id="subject"
                       type="text"
+                      name="subject"
+                      required
+                      minLength={3}
+                      aria-invalid={Boolean(errors.subject)}
+                      aria-describedby={errors.subject ? 'subject-error' : undefined}
                       value={formData.subject || ''}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       placeholder="e.g., Custom Software Development, Mobile App MVP"
@@ -834,7 +763,7 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                       } text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm outline-none transition-all duration-200`}
                     />
                     {errors.subject && (
-                      <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.subject}</span>
+                      <span id="subject-error" role="alert" className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.subject}</span>
                     )}
 
                     {/* Quick Selection Pills */}
@@ -864,48 +793,6 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </div>
                   </div>
 
-                  {/* Project details */}
-                  <motion.div
-                    variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0 } }}
-                    className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 p-4"
-                  >
-                    <div className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Project details</div>
-                    <input
-                      id="projectName"
-                      type="text"
-                      value={formData.projectName || ''}
-                      onChange={(e) => setFormData({ ...formData, projectName: e.target.value })}
-                      placeholder="Project name or short idea"
-                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-slate-950 dark:text-white placeholder-slate-400 text-sm outline-none"
-                    />
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <select
-                        id="serviceCategory"
-                        value={formData.serviceCategory}
-                        onChange={(e) => setFormData({ ...formData, serviceCategory: e.target.value })}
-                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
-                      >
-                        {SERVICE_CATEGORIES.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
-                      </select>
-                      <select
-                        id="projectStage"
-                        value={formData.projectStage}
-                        onChange={(e) => setFormData({ ...formData, projectStage: e.target.value })}
-                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
-                      >
-                        {PROJECT_STAGES.map((stage) => <option key={stage} value={stage}>{stage}</option>)}
-                      </select>
-                      <select
-                        id="timeline"
-                        value={formData.timeline}
-                        onChange={(e) => setFormData({ ...formData, timeline: e.target.value })}
-                        className="w-full px-3.5 py-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-950 dark:text-white text-sm outline-none"
-                      >
-                        {TIMELINE_OPTIONS.map((timeline) => <option key={timeline} value={timeline}>{timeline}</option>)}
-                      </select>
-                    </div>
-                  </motion.div>
-
                   {/* Field 4: Message */}
                   <div className="space-y-1.5">
                     <label 
@@ -917,16 +804,22 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     </label>
                     <textarea
                       id="message"
+                      name="message"
                       rows={3}
+                      required
+                      minLength={5}
+                      aria-invalid={Boolean(errors.message)}
+                      aria-describedby={errors.message ? 'message-error' : undefined}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      maxLength={5000}
                       placeholder="Briefly describe your project requirements, goals, or questions..."
                       className={`w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/90 border ${
                         errors.message ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-200 dark:border-slate-800 focus:border-[#1a73e8] dark:focus:border-cyan-400 focus:ring-2 focus:ring-blue-500/20'
                       } text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm outline-none transition-all duration-200 resize-none`}
                     />
                     {errors.message && (
-                      <span className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.message}</span>
+                      <span id="message-error" role="alert" className="text-xs text-rose-500 font-medium block animate-in fade-in">{errors.message}</span>
                     )}
                   </div>
 
@@ -1263,12 +1156,13 @@ export const ClientContactSection: React.FC<ClientContactSectionProps> = ({
                     <div className="font-bold text-slate-900 dark:text-white">Planning an On-Site Visit?</div>
                     <div className="text-slate-500 dark:text-slate-400 text-[11px]">Schedule an architectural briefing at our headquarters.</div>
                   </div>
-                  <a
-                    href={`mailto:${COMPANY_CONTACT.primaryEmail}?subject=On-Site%20Headquarters%20Visit%20Request`}
-                    className="px-3.5 py-1.5 rounded-lg bg-[#1a73e8] hover:bg-[#1557b0] text-white transition-colors font-bold shrink-0 shadow-xs"
+                  <button
+                    type="button"
+                    onClick={handleScheduleVisit}
+                    className="min-h-10 px-3.5 py-2 rounded-lg bg-[#1a73e8] hover:bg-[#1557b0] text-white transition-colors font-bold shrink-0 shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
                   >
                     Schedule Visit
-                  </a>
+                  </button>
                 </div>
 
               </div>

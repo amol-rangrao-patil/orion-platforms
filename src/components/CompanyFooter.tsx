@@ -24,7 +24,6 @@ import {
 } from '../data/companyInfo';
 import { LegalModalType } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { useTheme } from '../context/ThemeContext';
 
 interface CompanyFooterProps {
   onOpenLegalModal: (type: LegalModalType) => void;
@@ -32,7 +31,6 @@ interface CompanyFooterProps {
 
 export const CompanyFooter: React.FC<CompanyFooterProps> = ({ onOpenLegalModal }) => {
   const currentYear = new Date().getFullYear();
-  const { theme } = useTheme();
   const { language, t, multilingual } = useLanguage();
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
 
@@ -112,11 +110,11 @@ export const CompanyFooter: React.FC<CompanyFooterProps> = ({ onOpenLegalModal }
           
           {/* Brand & Corporate Description (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="flex items-center">
+            <div className="logo-lockup flex h-16 w-[250px] sm:h-[68px] sm:w-[320px] items-center rounded-xl border px-3 py-2 shadow-sm">
               <img 
-                src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} 
+                src="/orion-platforms-logo.png"
                 alt="ORION Platforms Pvt. Ltd. Logo" 
-                className="h-12 sm:h-14 w-auto max-w-[340px] object-contain select-none"
+                className="h-full w-full object-contain select-none"
               />
             </div>
 

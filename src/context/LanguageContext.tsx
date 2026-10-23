@@ -139,7 +139,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
       about: 'About',
       services: 'Services',
       contact: 'Contact',
-      founders: 'Founders',
+      founders: 'Founder',
       headquarters: 'Headquarters',
       techPvtLtd: 'Tech Pvt. Ltd.',
       hqBadge: 'HQ Kolhapur',

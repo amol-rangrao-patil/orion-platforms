@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://orion-platforms.vercel.app/sitemap.xml

@@ -145,30 +145,8 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
 
   return (
     <section id="hero" className="relative overflow-hidden pt-20 sm:pt-24 lg:pt-28 pb-14 lg:pb-20 border-b border-slate-200 dark:border-slate-800/80 transition-colors duration-300 scroll-mt-20">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_20%_12%,rgba(37,99,235,0.12),transparent_34%),radial-gradient(circle_at_85%_8%,rgba(6,182,212,0.10),transparent_30%)] dark:bg-[radial-gradient(circle_at_20%_12%,rgba(37,99,235,0.18),transparent_34%),radial-gradient(circle_at_85%_8%,rgba(6,182,212,0.14),transparent_30%)]" />
       
-      {/* Architectural Blueprint Grid Pattern */}
-      <div className="absolute inset-0 bg-tech-grid-light dark:bg-tech-grid-dark opacity-70 pointer-events-none radial-mask" />
-
-      {/* Radiant Ambient Glow Lights - Subtle to preserve typography contrast */}
-      <motion.div 
-        animate={{ 
-          y: [0, -25, 0],
-          x: [0, 20, 0],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-4 left-1/6 w-80 sm:w-[420px] h-80 sm:h-[420px] rounded-full bg-blue-500/10 dark:bg-blue-600/20 blur-[130px] pointer-events-none"
-      />
-      <motion.div 
-        animate={{ 
-          y: [0, 25, 0],
-          x: [0, -20, 0],
-          scale: [1, 1.12, 1]
-        }}
-        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-12 right-1/6 w-80 sm:w-[440px] h-80 sm:h-[440px] rounded-full bg-cyan-400/10 dark:bg-indigo-600/20 blur-[140px] pointer-events-none"
-      />
-
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header Hero Section */}
@@ -201,7 +179,7 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
 
             {/* Headline Container with balanced typography sizing */}
             <div className="min-h-[3.6rem] sm:min-h-[4.6rem] lg:min-h-[5.6rem] flex items-center justify-center">
-              <h1 className="font-['Outfit',sans-serif] text-3xl min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-none px-1 relative select-none whitespace-nowrap">
+              <h1 className="font-['Outfit',sans-serif] text-[clamp(2rem,9vw,4.5rem)] font-black tracking-tight leading-[0.98] px-1 relative select-none max-w-full">
                 {/* Text Enter Animation running smoothly every 10 seconds */}
                 <AnimatePresence mode="wait">
                   <motion.span 
@@ -210,7 +188,7 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    className="inline-flex items-center justify-center flex-nowrap whitespace-nowrap gap-x-2 sm:gap-x-3.5 md:gap-x-4 cursor-pointer max-w-full"
+                    className="inline-flex items-center justify-center flex-wrap gap-x-2 sm:gap-x-3.5 md:gap-x-4 cursor-pointer max-w-full text-center"
                     onClick={handleManualReplay}
                     title="Click to advance to next language immediately"
                   >
@@ -349,6 +327,31 @@ export const HeroCompanySection: React.FC<HeroCompanySectionProps> = ({
           </motion.div>
 
         </div>
+
+          <div className="mx-auto mb-12 grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-3">
+            {[
+              { icon: Shield, title: 'Clear ownership', text: 'Your IP stays yours.' },
+              { icon: Zap, title: 'Fast decisions', text: 'Direct access to engineers.' },
+              { icon: Globe, title: 'Built to scale', text: 'Reliable systems from day one.' }
+            ].map(({ icon: Icon, title, text }, index) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.35, delay: index * 0.08 }}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-left shadow-sm dark:border-slate-800 dark:bg-slate-900/80"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-cyan-300">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span>
+                  <strong className="block text-sm font-bold text-slate-900 dark:text-white">{title}</strong>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">{text}</span>
+                </span>
+              </motion.div>
+            ))}
+          </div>
 
         {/* 4 Core Platform Capabilities Grid */}
         <div id="company-capabilities" className="pt-12 scroll-mt-24">

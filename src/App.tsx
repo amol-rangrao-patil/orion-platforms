@@ -7,7 +7,6 @@ import { ClientContactSection } from './components/ClientContactSection';
 import { CompanyFooter } from './components/CompanyFooter';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { FoundersPage } from './components/FoundersPage';
-import TechConstellationCanvas from './components/TechConstellationCanvas';
 import { LegalModalType } from './types';
 
 // Lazy loaded legal modal for performance
@@ -53,11 +52,8 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <LanguageProvider>
-          <div className="min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 relative selection:bg-[#1a73e8] selection:text-white flex flex-col font-sans">
+          <div className="app-surface min-h-screen w-full overflow-x-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 relative selection:bg-[#1a73e8] selection:text-white flex flex-col font-sans">
             
-            {/* Interactive Constellation Particle Canvas Background */}
-            <TechConstellationCanvas />
-
           {/* Global Navigation Bar */}
           <Navbar onScrollToContact={handleScrollToContact} />
 

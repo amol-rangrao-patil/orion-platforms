@@ -11,11 +11,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
-import { useTheme } from '../context/ThemeContext';
 
 interface LeaderProfile {
   name: string;
-  role: 'Founder' | 'Co-founder';
+  role: 'Founder';
   image: string;
   email: string;
   linkedin: string;
@@ -34,36 +33,6 @@ const founder: LeaderProfile = {
   bio: 'Founder of Orion Platforms, shaping the company vision and leading product, engineering, and technology strategy.',
   work: ['Founded Orion Platforms', 'Leading product and engineering direction', 'Building enterprise software and cloud solutions']
 };
-
-const coFounders: LeaderProfile[] = [
-  {
-    name: 'Abhishek Shikarkhane',
-    role: 'Co-founder',
-    image: '/founders/abhishek-shikarkhane.png',
-    email: 'contact.orionplatforms@gmail.com',
-    linkedin: 'https://www.linkedin.com/in/abhishek-shikarkhane-4491b2293',
-    bio: 'Co-founder helping turn product ideas into reliable, practical, and user-focused technology solutions.',
-    work: ['Product planning and execution', 'Supporting platform engineering', 'Collaborating on client solutions']
-  },
-  {
-    name: 'Sanket Yadav',
-    role: 'Co-founder',
-    image: '/founders/sanket-yadav.jpeg',
-    email: 'contact.orionplatforms@gmail.com',
-    linkedin: 'https://www.linkedin.com/in/sanket-yadav-3aa9312b7',
-    bio: 'Co-founder contributing to technology execution, product development, and the continued growth of Orion Platforms.',
-    work: ['Product development support', 'Technology execution', 'Contributing to scalable solutions']
-  },
-  {
-    name: 'Sainath Sale',
-    role: 'Co-founder',
-    image: '/app-icon-512.png',
-    email: 'contact.orionplatforms@gmail.com',
-    linkedin: 'https://www.linkedin.com/in/sainath-sale-1a20a932b',
-    bio: 'Co-founder focused on collaborative delivery, useful digital products, and strong execution across the team.',
-    work: ['Digital product development', 'Team collaboration and delivery', 'Supporting technical initiatives']
-  }
-];
 
 function ProfileModal({ profile, onClose }: { profile: LeaderProfile; onClose: () => void }) {
   return (
@@ -105,7 +74,6 @@ function LeaderCard({ profile, founderCard = false, index = 0 }: { profile: Lead
         <div className={founderCard ? 'grid lg:grid-cols-[260px_1fr]' : ''}>
           <div className={`relative flex items-center justify-center overflow-hidden bg-white/35 p-6 backdrop-blur-xl dark:bg-slate-900/30 ${founderCard ? 'min-h-[260px]' : 'min-h-[180px]'}`}>
             <motion.div animate={{ background: ['linear-gradient(135deg, rgba(37,99,235,0.22), rgba(6,182,212,0.16), rgba(16,185,129,0.12))', 'linear-gradient(225deg, rgba(6,182,212,0.18), rgba(16,185,129,0.18), rgba(37,99,235,0.22))', 'linear-gradient(315deg, rgba(16,185,129,0.14), rgba(37,99,235,0.2), rgba(6,182,212,0.18))'] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} className="absolute inset-0 opacity-90" />
-            <div className="absolute inset-0 bg-tech-grid-light opacity-30 dark:bg-tech-grid-dark" />
             <button type="button" onClick={() => setModalOpen(true)} aria-label={`Open ${profile.name} profile`} className="group/avatar relative rounded-full focus:outline-none focus:ring-4 focus:ring-cyan-300/50">
               <motion.img src={profile.image} onError={(event) => { event.currentTarget.src = '/app-icon-512.png'; }} alt={`${profile.name} profile`} animate={{ y: [6, 1, 6] }} transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.25 }} whileHover={{ scale: 1.07, rotate: 2 }} className={`${founderCard ? 'h-44 w-44' : 'h-32 w-32'} rounded-full border-4 border-white/90 object-cover object-[center_20%] shadow-2xl`} />
               <span className="absolute bottom-1 right-1 flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-600 shadow-lg dark:bg-slate-900 dark:text-cyan-300"><UserRound className="h-5 w-5" /></span>
@@ -126,28 +94,26 @@ function LeaderCard({ profile, founderCard = false, index = 0 }: { profile: Lead
 }
 
 export const FoundersPage: React.FC = () => {
-  const { theme } = useTheme();
   const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <header className="border-b border-slate-200 bg-white/90 dark:border-slate-800 dark:bg-slate-950/90"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"><a href="/" aria-label="Back to Orion Platforms home"><img src={theme === 'dark' ? '/logo-dark.png' : '/logo-light.png'} alt="ORION Platforms" className="h-10 w-auto max-w-[220px] object-contain" /></a><a href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:text-blue-300"><ArrowLeft className="h-4 w-4" /> {t.nav.about}</a></div></header>
-      <main className="relative overflow-hidden px-4 py-12 sm:px-6 lg:px-8 lg:py-20"><div className="absolute inset-0 bg-tech-grid-light opacity-50 dark:bg-tech-grid-dark" /><div className="relative mx-auto max-w-6xl">
+      <header className="border-b border-slate-200 bg-white/90 dark:border-slate-800 dark:bg-slate-950/90"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"><a href="/" aria-label="Back to Orion Platforms home" className="logo-lockup flex w-fit items-center rounded-xl border px-2.5 py-1.5 shadow-sm"><img src="/orion-platforms-logo.png" alt="ORION Platforms" className="h-9 w-auto max-w-[210px] object-contain" /></a><a href="/" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-bold text-slate-700 hover:border-blue-400 hover:text-blue-600 dark:border-slate-700 dark:text-slate-200 dark:hover:border-blue-500 dark:hover:text-blue-300"><ArrowLeft className="h-4 w-4" /> {t.nav.about}</a></div></header>
+      <main className="relative overflow-hidden px-4 py-12 sm:px-6 lg:px-8 lg:py-20"><div className="relative mx-auto max-w-6xl">
         <section className="relative mb-14 overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-10">
           <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, ease: 'easeOut' }} className="absolute inset-x-0 top-0 h-1 origin-left bg-gradient-to-r from-blue-700 via-cyan-400 to-emerald-400" />
           <div className="absolute right-8 top-8 h-28 w-28 rounded-full border border-blue-200/70 dark:border-blue-900/70" />
           <div className="absolute right-14 top-14 h-16 w-16 rounded-full border border-cyan-300/60 dark:border-cyan-700/60" />
           <div className="relative">
             <div>
-              <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-blue-600 dark:text-cyan-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />Leadership directory</motion.p>
+              <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-blue-600 dark:text-cyan-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />Founder profile</motion.p>
               <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.45 }} className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-slate-950 sm:text-6xl dark:text-white">People who turn<br /><span className="text-blue-600 dark:text-cyan-300">ideas into systems.</span></motion.h1>
-              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">A focused leadership team building useful software, dependable platforms, and long-term technology partnerships.</motion.p>
+              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300">Meet the founder behind Orion Platforms and the product-led approach to building useful software, dependable platforms, and long-term technology partnerships.</motion.p>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-7 flex flex-wrap items-center gap-3 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"><span className="rounded-full bg-slate-100 px-3 py-2 dark:bg-slate-800">Orion Platforms</span><span className="h-1 w-1 rounded-full bg-emerald-500" /><span>Systems & IT engineering</span></motion.div>
             </div>
           </div>
         </section>
         <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5 }}><div className="mb-4 flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-cyan-300">01 profile</p><h2 className="mt-1 text-2xl font-black text-slate-950 dark:text-white">Founder</h2></div><span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/40 dark:text-cyan-300">Company leadership</span></div><LeaderCard profile={founder} founderCard /></motion.section>
-        <motion.section initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.5 }} className="mt-16"><div className="mb-4 flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600 dark:text-cyan-300">03 profiles</p><h2 className="mt-1 text-2xl font-black text-slate-950 dark:text-white">Co-founders</h2></div><span className="text-xs font-semibold text-slate-500 dark:text-slate-400">The founding team</span></div><div className="grid gap-5 md:grid-cols-3">{coFounders.map((profile, index) => <LeaderCard key={profile.name} profile={profile} index={index} />)}</div></motion.section>
       </div></main>
     </div>
   );
