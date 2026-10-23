@@ -4,10 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Orion Platforms | Custom Software & Cloud Engineering</title>
-    <meta name="description" content="Orion Platforms builds custom enterprise software, web and mobile applications, cloud infrastructure, and dependable IT systems for ambitious businesses." />
-    <meta name="keywords" content="custom software development, enterprise software, web application development, mobile app development, cloud engineering, DevOps, IT services, Kolhapur" />
+    <meta name="description" content="Orion Platforms is a Kolhapur-based software engineering company building custom enterprise software, web and mobile apps, cloud infrastructure, and scalable IT systems." />
+    <meta name="keywords" content="Orion Platforms, Orion Platforms Kolhapur, custom software development Kolhapur, enterprise software, web application development, mobile app development, cloud engineering, DevOps, IT services" />
     <meta name="author" content="Orion Platforms" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow, max-image-preview:large" />
+    <meta name="application-name" content="Orion Platforms" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="canonical" href="https://orion-platforms.vercel.app/" />
     <meta name="theme-color" content="#050816" />
     <link rel="icon" type="image/png" sizes="32x32" href="/app-icon-192.png" />
@@ -17,8 +20,10 @@
     <meta property="og:description" content="Custom enterprise software, mobile applications, and scalable cloud systems engineered by Orion Platforms." />
     <meta property="og:url" content="https://orion-platforms.vercel.app/" />
     <meta property="og:site_name" content="Orion Platforms" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:image" content="https://orion-platforms.vercel.app/orion-platforms-logo.png" />
     <meta property="og:image:alt" content="Orion Platforms colorful ribbon logo" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Orion Platforms | Custom Software & Cloud Engineering" />
@@ -27,21 +32,68 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Orion Platforms",
-        "legalName": "Orion Platforms Pvt. Ltd.",
-        "url": "https://orion-platforms.vercel.app/",
-        "logo": "https://orion-platforms.vercel.app/orion-platforms-logo.png",
-        "description": "Custom enterprise software, mobile applications, cloud infrastructure, and IT engineering.",
-        "email": "mailto:contact.orionplatforms@gmail.com",
-        "telephone": "+91 7499577784",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Kolhapur",
-          "addressRegion": "Maharashtra",
-          "addressCountry": "IN"
-        },
-        "sameAs": ["https://www.instagram.com/orion_platforms"]
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://orion-platforms.vercel.app/#organization",
+            "name": "Orion Platforms",
+            "legalName": "Orion Platforms Pvt. Ltd.",
+            "url": "https://orion-platforms.vercel.app/",
+            "logo": "https://orion-platforms.vercel.app/orion-platforms-logo.png",
+            "description": "Orion Platforms is a software engineering company building custom enterprise software, web and mobile applications, cloud infrastructure, and scalable IT systems.",
+            "email": "mailto:contact.orionplatforms@gmail.com",
+            "telephone": "+91 7499577784",
+            "founder": {
+              "@type": "Person",
+              "name": "Amol Patil",
+              "url": "https://orion-platforms.vercel.app/founders"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "NH166G, Mhalunge",
+              "addressLocality": "Kolhapur",
+              "addressRegion": "Maharashtra",
+              "postalCode": "416206",
+              "addressCountry": "IN"
+            },
+            "areaServed": "Worldwide",
+            "sameAs": [
+              "https://www.instagram.com/orion_platforms",
+              "https://www.linkedin.com/in/amol-rangrao-patil"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://orion-platforms.vercel.app/#website",
+            "url": "https://orion-platforms.vercel.app/",
+            "name": "Orion Platforms",
+            "description": "Custom software, cloud engineering, and scalable IT systems by Orion Platforms.",
+            "publisher": {
+              "@id": "https://orion-platforms.vercel.app/#organization"
+            },
+            "inLanguage": ["en-IN", "mr-IN", "hi-IN"]
+          },
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://orion-platforms.vercel.app/#local-business",
+            "name": "Orion Platforms",
+            "url": "https://orion-platforms.vercel.app/",
+            "image": "https://orion-platforms.vercel.app/orion-platforms-logo.png",
+            "parentOrganization": {
+              "@id": "https://orion-platforms.vercel.app/#organization"
+            },
+            "priceRange": "$$",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "NH166G, Mhalunge",
+              "addressLocality": "Kolhapur",
+              "addressRegion": "Maharashtra",
+              "postalCode": "416206",
+              "addressCountry": "IN"
+            },
+            "telephone": "+91 7499577784"
+          }
+        ]
       }
     </script>
     <script>
@@ -161,6 +213,13 @@
       </div>
     </div>
     <div id="root"></div>
+    <noscript>
+      <main>
+        <h1>Orion Platforms</h1>
+        <p>Orion Platforms is a Kolhapur-based software engineering company building custom enterprise software, web and mobile applications, cloud infrastructure, and scalable IT systems.</p>
+        <p><a href="/founders">Meet the founder</a> · <a href="mailto:contact.orionplatforms@gmail.com">Contact Orion Platforms</a></p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
